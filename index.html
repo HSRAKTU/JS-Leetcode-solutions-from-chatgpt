@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script> 
+        const apiUrl = "https://api.openai.com/v1/chat/completions"
+        const apiKey = "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"
+
+        async function postData() {
+            const data = document.getElementById('message').value;
+            console.log(data);
+            fetch(apiUrl, {
+                method: 'POST',
+               // mode:"no-cors",
+                headers: {
+                   // "Access-Control-Allow-Origin": "*",
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(
+                    {
+                        "model":"gpt-3.5-turbo",
+                        "messages":[
+                            {
+                                "role":"user",
+                                "content":`Write javascript code for this question: ${data}`
+                            }
+                        ]
+                    }
+                )
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                console.log("reaching here")
+
+                const responseText = data.choices[0].message.content.trim()
+                const card = document.createElement('pre')
+                card.setAttribute('class','card')
+                card.innerHTML = responseText
+                const parent = document.getElementById('chat-area')
+                parent.appendChild(card)
+            })
+            .catch( err => {
+                console.log(err)
+            })
+        }
+
+    </script>
+    <style>
+        .dark {
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+        .card {
+            background-color: #292828;
+            color: #0abb00;
+            width: auto;
+            margin: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .input {
+            margin: 0 auto;
+            margin-top: 30px;
+            height: 200px;
+            width: 80%;
+            display: block;
+        }
+        #chat-area {
+            overflow-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="dark">
+    <h1>Leetcode Solutions with the help of ChatGPT</h1>
+    <form>
+        <label for="message">Enter your code statement: </label>
+        <textarea class="input" id="message" cols="30" rows="10"></textarea>
+        <button type="button" onclick="postData()">Send me</button>
+        <div id="chat-area"></div>
+    </form>
+</body>
+</html>
